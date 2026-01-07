@@ -1,0 +1,24 @@
+.authWrap{
+  min-height: calc(100vh - 64px);
+  display:grid;
+  place-items:center;
+  padding: 24px;
+}
+.authCard{
+  width:100%;
+  max-width: 420px;
+  padding: 18px;
+}
+.authTitle{ font-size: 22px; font-weight: 900; margin: 0; }
+.authSub{ margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.formRow{ margin-top: 12px; }
+.formRow label{ display:block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.errorBox{
+  margin-top: 12px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}

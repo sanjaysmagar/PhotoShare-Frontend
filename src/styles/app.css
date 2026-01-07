@@ -1,0 +1,112 @@
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow: 0 10px 25px rgba(17,24,39,0.06);
+  --radius:16px;
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+a{ color:inherit; text-decoration:none; }
+
+.container{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.btn{
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .06s ease, opacity .2s ease, background .2s ease;
+}
+.btn:active{ transform: scale(0.99); }
+.btn:disabled{ opacity:0.6; cursor:not-allowed; }
+
+.btn-primary{ background:#111827; color:white; }
+.btn-primary:hover{ background:#0b1220; }
+.btn-ghost{ background:transparent; border:1px solid var(--border); }
+.btn-ghost:hover{ background:#f3f4f6; }
+
+.input{
+  width:100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: white;
+}
+.input:focus{ border-color:#cbd5e1; box-shadow: 0 0 0 4px rgba(203,213,225,.35); }
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  background: #fff;
+}
+
+.badge {
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.badge:hover {
+  background: #f3f4f6; /* light gray hover */
+  transform: translateY(-1px);
+}
+
+.badge {
+  cursor: pointer;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.input-wrap .input {
+  padding-left: 38px; /* space for icon */
+}
+
+.btn-primary {
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background: #0b1220; /* slightly darker */
+  transform: translateY(-1px);
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
