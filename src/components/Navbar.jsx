@@ -8,6 +8,7 @@ export default function Navbar() {
 
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [search, setSearch] = useState("");
 
   // close dropdown when clicking outside
   useEffect(() => {
@@ -62,13 +63,53 @@ export default function Navbar() {
                   Feed
                 </Link>
               )}
+              <div style={{ position: "relative" }}>
+                <input
+                  className="input"
+                  placeholder="Search photos..."
+                  style={{
+                    maxWidth: 260,
+                    paddingRight: 38, // ✅ space for icon button
+                  }}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const q = search.trim();
+                      nav(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+                    }
+                  }}
+                />
 
-              {/* Search */}
-              <input
-                className="input"
-                placeholder="Search photos..."
-                style={{ maxWidth: 260 }}
-              />
+                <button
+                  type="button"
+                  title="Search"
+                  onClick={() => {
+                    const q = search.trim();
+                    nav(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = "var(--text)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "var(--muted)")
+                  }
+                  style={{
+                    position: "absolute",
+                    right: 6,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    color: "var(--muted)",
+                    transition: "color 0.15s ease",
+                    padding: 6,
+                  }}
+                >
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
 
               {/* Profile dropdown */}
               <div style={{ position: "relative" }} ref={dropdownRef}>

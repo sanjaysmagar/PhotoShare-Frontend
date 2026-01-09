@@ -24,6 +24,17 @@ export default function PostCard({ post, onChanged }) {
   const [likes, setLikes] = useState(post.likes || []);
   const [previewOpen, setPreviewOpen] = useState(false);
 
+  const [showEditor, setShowEditor] = useState(false);
+  const [editTitle, setEditTitle] = useState(post.title || "");
+  const [editLocation, setEditLocation] = useState(post.location || "");
+  const [editCaption, setEditCaption] = useState(post.caption || "");
+
+  useEffect(() => {
+    setEditTitle(post.title || "");
+    setEditLocation(post.location || "");
+    setEditCaption(post.caption || "");
+  }, [post.title, post.location, post.caption]);
+
   const myUserId = useMemo(() => getUserIdFromToken(token), [token]);
 
   const likedByMe = useMemo(() => {
@@ -57,23 +68,51 @@ export default function PostCard({ post, onChanged }) {
     setLikes(post.likes || []);
   }, [post.likes]);
 
-  const edit = async () => {
-    const nextCaption = window.prompt("Edit caption:", post.caption || "");
-    if (nextCaption === null) return; // cancel
+  // const edit = async () => {
+  //   const nextCaption = window.prompt("Edit caption:", post.caption || "");
+  //   if (nextCaption === null) return; // cancel
+
+  //   try {
+  //     setErr("");
+  //     setBusy(true);
+
+  //     // Requires backend: PUT /api/posts/:id
+  //     await http.put(`/api/posts/${post._id}`, { caption: nextCaption });
+
+  //     onChanged();
+  //   } catch (e) {
+  //     setErr(
+  //       e?.response?.data?.message ||
+  //         "Edit failed (make sure PUT /api/posts/:id exists)"
+  //     );
+  //   } finally {
+  //     setBusy(false);
+  //   }
+  // };
+
+  const edit = () => {
+    setErr("");
+    setShowEditor(true);
+  };
+
+  // ✅ NEW: submit edited fields
+  const saveEdit = async (e) => {
+    e.preventDefault();
 
     try {
       setErr("");
       setBusy(true);
 
-      // Requires backend: PUT /api/posts/:id
-      await http.put(`/api/posts/${post._id}`, { caption: nextCaption });
+      await http.put(`/api/posts/${post._id}`, {
+        title: editTitle,
+        location: editLocation,
+        caption: editCaption,
+      });
 
-      onChanged();
-    } catch (e) {
-      setErr(
-        e?.response?.data?.message ||
-          "Edit failed (make sure PUT /api/posts/:id exists)"
-      );
+      setShowEditor(false);
+      onChanged(); // refresh list
+    } catch (e2) {
+      setErr(e2?.response?.data?.message || "Edit failed");
     } finally {
       setBusy(false);
     }
@@ -173,9 +212,26 @@ export default function PostCard({ post, onChanged }) {
             {post.createdAt ? formatPostDate(post.createdAt) : ""}
           </span>
         </div>
-
         {/* Keep caption area even if empty so actions row stays consistent */}
-        <div className="postCaption" style={{ minHeight: 18 }}>
+        <div
+          className="postCaption"
+          title={post.caption}
+          style={{
+            minHeight: 18,
+            display: "-webkit-box",
+            WebkitLineClamp: 1, // ✅ number of lines
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {post.title ? (
+            <span
+              style={{ fontWeight: 800, color: "var(--text)", marginRight: 6 }}
+            >
+              {post.title}
+            </span>
+          ) : null}
           {post.caption || ""}
         </div>
 
@@ -268,6 +324,144 @@ export default function PostCard({ post, onChanged }) {
         </div>
       </div>
 
+      {/* ✅ NEW: Edit Post Modal */}
+      {showEditor && (
+        <div
+          onClick={() => setShowEditor(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.35)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+          }}
+        >
+          <div
+            className="card"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 720,
+              padding: 16,
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 10,
+              }}
+            >
+              <div
+                style={{
+                  height: 34,
+                  width: 34,
+                  borderRadius: 12,
+                  border: "1px solid var(--border)",
+                  display: "grid",
+                  placeItems: "center",
+                  background: "#fff",
+                }}
+              >
+                <i className="fa-regular fa-pen-to-square" />
+              </div>
+
+              <div style={{ fontWeight: 900, flex: 1 }}>Edit post</div>
+
+              <button
+                className="btn btn-ghost"
+                type="button"
+                onClick={() => setShowEditor(false)}
+                disabled={busy}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={saveEdit}>
+              <div style={{ display: "grid", gap: 12 }}>
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      color: "var(--muted)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Title
+                  </label>
+                  <input
+                    className="input"
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Add a title"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      color: "var(--muted)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Location
+                  </label>
+                  <input
+                    className="input"
+                    type="text"
+                    value={editLocation}
+                    onChange={(e) => setEditLocation(e.target.value)}
+                    placeholder="Add a location"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      color: "var(--muted)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Caption
+                  </label>
+                  <textarea
+                    className="input"
+                    rows={4}
+                    value={editCaption}
+                    onChange={(e) => setEditCaption(e.target.value)}
+                    placeholder="Write a caption..."
+                    style={{ resize: "vertical" }}
+                  />
+                </div>
+
+                {err && <div className="errorBox">{err}</div>}
+
+                <button
+                  className="btn btn-primary"
+                  style={{ width: "100%" }}
+                  disabled={busy}
+                >
+                  {busy ? "Saving..." : "Save changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {previewOpen && (
         <div
           onClick={() => setPreviewOpen(false)}
@@ -323,6 +517,18 @@ export default function PostCard({ post, onChanged }) {
                       • <span>{formatPostDate(post.createdAt)}</span>
                     </>
                   ) : null}
+                  {post.location ? (
+                    <span
+                      title={post.location}
+                      style={{
+                        marginLeft: 10,
+                        gap: 6,
+                      }}
+                    >
+                      <i className="fa-solid fa-location-dot"></i>{" "}
+                      {post.location}
+                    </span>
+                  ) : null}
                 </div>
 
                 <button
@@ -353,6 +559,17 @@ export default function PostCard({ post, onChanged }) {
               {/* Caption */}
               {post.caption ? (
                 <div style={{ padding: "12px 8px 6px", color: "var(--text)" }}>
+                  {post.title ? (
+                    <span
+                      style={{
+                        fontWeight: 800,
+                        color: "var(--text)",
+                        marginRight: 6,
+                      }}
+                    >
+                      {post.title}
+                    </span>
+                  ) : null}
                   {post.caption}
                 </div>
               ) : null}
@@ -417,28 +634,26 @@ export default function PostCard({ post, onChanged }) {
                 ></i>
               </button>
 
-              {(role === "user" || role === "viewer") && (
-                <button
-                  className="btn btn-ghost"
-                  type="button"
-                  onClick={downloadPhoto}
-                  disabled={busy}
-                  title="Download"
-                  style={{
-                    width: 46,
-                    height: 46,
-                    display: "grid",
-                    placeItems: "center",
-                    background: "transparent",
-                    border: "1px solid var(--border)",
-                  }}
-                >
-                  <i
-                    className="fa-solid fa-download"
-                    style={{ fontSize: 18 }}
-                  ></i>
-                </button>
-              )}
+              <button
+                className="btn btn-ghost"
+                type="button"
+                onClick={downloadPhoto}
+                disabled={busy}
+                title="Download"
+                style={{
+                  width: 46,
+                  height: 46,
+                  display: "grid",
+                  placeItems: "center",
+                  background: "transparent",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <i
+                  className="fa-solid fa-download"
+                  style={{ fontSize: 18 }}
+                ></i>
+              </button>
             </div>
           </div>
         </div>

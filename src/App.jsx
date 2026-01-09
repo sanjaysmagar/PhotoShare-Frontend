@@ -10,6 +10,8 @@ import RoleRoute from "./auth/RoleRoute";
 import AuthRedirect from "./auth/AuthRedirect";
 import CreatorBlockHome from "./auth/CreatorBlockHome";
 import Footer from "./components/Footer";
+import Search from "./pages/Search";
+import Profile from "./pages/Profile";
 
 import "./styles/app.css";
 import "./styles/auth.css";
@@ -63,6 +65,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/search" element={<Search />} />
+        <Route path="/profile" element={<Profile />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

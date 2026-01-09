@@ -23,6 +23,8 @@ export default function Dashboard() {
   const [showUploader, setShowUploader] = useState(false);
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState("");
+  const [title, setTitle] = useState("");
+  const [location, setLocation] = useState("");
   const [err, setErr] = useState("");
   const [uploading, setUploading] = useState(false);
 
@@ -75,6 +77,8 @@ export default function Dashboard() {
       const form = new FormData();
       form.append("image", file);
       form.append("caption", caption.trim());
+      form.append("title", title.trim());
+      form.append("location", location.trim());
 
       await http.post("/api/posts", form, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -246,6 +250,46 @@ export default function Dashboard() {
                       marginBottom: 6,
                     }}
                   >
+                    Title
+                  </label>
+                  <input
+                    className="input"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Add a title"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      color: "var(--muted)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Location
+                  </label>
+                  <input
+                    className="input"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Add a location"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 13,
+                      color: "var(--muted)",
+                      marginBottom: 6,
+                    }}
+                  >
                     Caption
                   </label>
                   <textarea
@@ -285,8 +329,19 @@ export default function Dashboard() {
         }}
       >
         <div>
-          <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>My Posts</h3>
-          <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 4 }}>
+          <h3
+            style={{ margin: 0, marginLeft: 5, fontSize: 20, fontWeight: 900 }}
+          >
+            My Posts
+          </h3>
+          <div
+            style={{
+              color: "var(--muted)",
+              fontSize: 12,
+              marginTop: 4,
+              marginLeft: 5,
+            }}
+          >
             Showing {visiblePosts.length} of {posts.length}
           </div>
         </div>
